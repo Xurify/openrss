@@ -4,15 +4,15 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--theme);
+  background-color: hsl(var(--theme-background));
 }
 
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
-    --theme: #FFEFD7;
-    --orange: #F4722F;
+    --theme-background: 36 100% 92%;
+    --theme-main: 20 90% 57%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;

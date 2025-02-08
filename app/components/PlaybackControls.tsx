@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const AUDIO_URL = "";
+const AUDIO_URL =
+  "https://www.buzzsprout.com/2260539/episodes/16398459-seven-shipping-principles.mp3";
 
 export const PlaybackControls = () => {
   const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } =
@@ -86,19 +87,19 @@ export const PlaybackControls = () => {
       <div className="flex flex-col items-center w-1/3">
         <div className="flex items-center space-x-6">
           <button
+            onClick={handleRewind15}
+            className="relative text-black hover:text-black/60 transition-colors"
+          >
+            <RotateCcwIcon size={35} />
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold mt-0.5">
+              15
+            </span>
+          </button>
+          <button
             onClick={handleSkipForward}
             className="text-black hover:text-black/60 transition-colors"
           >
             <SkipBackIcon size={25} />
-          </button>
-          <button
-            onClick={handleRewind15}
-            className="relative text-black hover:text-black/60 transition-colors"
-          >
-            <RotateCcwIcon size={45} />
-            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold mt-1">
-              15
-            </span>
           </button>
           <button
             onClick={handlePlayPause}
@@ -111,19 +112,19 @@ export const PlaybackControls = () => {
             )}
           </button>
           <button
-            onClick={handleForward15}
-            className="relative text-black hover:text-black/60 transition-colors"
-          >
-            <RotateCwIcon size={45} />
-            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold mt-1">
-              15
-            </span>
-          </button>
-          <button
             onClick={handleSkipForward}
             className="text-black hover:text-black/60 transition-colors"
           >
             <SkipForwardIcon size={25} />
+          </button>
+          <button
+            onClick={handleForward15}
+            className="relative text-black hover:text-black/60 transition-colors"
+          >
+            <RotateCwIcon size={35} />
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold mt-0.5">
+              15
+            </span>
           </button>
         </div>
         <div className="mt-1 max-w-[500px] w-full flex items-center gap-2">

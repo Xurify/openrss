@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Chivo_Mono } from "next/font/google";
+import { PlaybackControls } from "./components/PlaybackControls";
+import { Sidebar } from "./components/Sidebar";
 import "./globals.css";
 
 const chivoMono = Chivo_Mono({
@@ -23,10 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${chivoMono.className} antialiased`}
-      >
-        {children}
+      <body className={`${chivoMono.className} antialiased`}>
+        <div className="flex h-full">
+          <Sidebar />
+          <div className="flex flex-1 flex-col p-6">
+            {children}
+            <PlaybackControls />
+          </div>
+        </div>
       </body>
     </html>
   );
