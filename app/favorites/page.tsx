@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <h1>Saved</h1>
+      <h1>Favorites</h1>
     </>
   );
 }
