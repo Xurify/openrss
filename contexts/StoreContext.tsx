@@ -1,25 +1,14 @@
 "use client";
 
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { z } from 'zod';
+import { getFeeds, addFeeds as dbAddFeeds, getFavorites, toggleFavorite as dbToggleFavorite } from '@/utils/db';
 import type { RssItem } from "@/types/rss";
-
-const RssItemSchema = z.object({
-  title: z.string(),
-  link: z.string(),
-  description: z.string(),
-  pubDate: z.string(),
-  guid: z.string(),
-  imageUrl: z.string().optional(),
-  channelTitle: z.string().optional(),
-  enclosureUrl: z.string().optional(),
-});
 
 interface StoreContextType {
   feeds: RssItem[];
   favorites: string[];
-  addFeeds: (newFeeds: RssItem[]) => void;
-  toggleFavorite: (guid: string) => void;
+  addFeeds: (newFeeds: RssItem[]) => Promise<void>;
+  toggleFavorite: (guid: string) => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -29,53 +18,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    const storedFeeds = localStorage.getItem("rssFeeds");
-    const storedFavorites = localStorage.getItem("favorites");
-
-    if (storedFeeds) {
-      try {
-        const parsedFeeds = JSON.parse(storedFeeds);
-        setFeeds(parsedFeeds.items);
-      } catch (error) {
-        console.error("Failed to load stored feeds:", error);
-      }
-    }
-
-    if (storedFavorites) {
-      try {
-        setFavorites(JSON.parse(storedFavorites));
-      } catch (error) {
-        console.error("Failed to load stored favorites:", error);
-      }
-    }
+    getFeeds().then(setFeeds);
+    getFavorites().then(favs => setFavorites(favs.map(f => f.guid)));
   }, []);
 
-  useEffect(() => {
-    if (feeds.length > 0) {
-      localStorage.setItem("rssFeeds", JSON.stringify({ items: feeds }));
-    }
-  }, [feeds]);
-
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const addFeeds = (newFeeds: RssItem[]) => {
-    setFeeds(prevFeeds => {
-      const uniqueNewFeeds = newFeeds.filter(
-        newFeed => !prevFeeds.some(existingFeed => existingFeed.link === newFeed.link)
-      );
-      return [...prevFeeds, ...uniqueNewFeeds];
-    });
+  const addFeeds = async (newFeeds: RssItem[]) => {
+    await dbAddFeeds(newFeeds);
+    setFeeds(await getFeeds());
   };
 
-  const toggleFavorite = (guid: string) => {
-    setFavorites(prevFavorites => {
-      const newFavorites = prevFavorites.includes(guid)
-        ? prevFavorites.filter(id => id !== guid)
-        : [...prevFavorites, guid];
-      return newFavorites;
-    });
+  const toggleFavorite = async (guid: string) => {
+    await dbToggleFavorite(guid);
+    setFavorites(await getFavorites().then(favs => favs.map(f => f.guid)));
   };
 
   return (

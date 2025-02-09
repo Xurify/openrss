@@ -3,25 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, DownloadIcon, HeartIcon } from "lucide-react";
-import { useState, useEffect } from "react";
-import { z } from "zod";
+import { useState } from "react";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useAudio } from "@/contexts/AudioContext";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { useStore } from "@/contexts/StoreContext";
 import { parseRssFeed, formatDate, truncateTitle } from "@/utils/rss";
-import { RssItemSchema, type RssItem } from "@/types/rss";
-
-const RssFeedSchema = z.object({
-  items: z.array(RssItemSchema),
-});
+import { type RssItem } from "@/types/rss";
 
 export default function Home() {
   const [url, setUrl] = useState("");
