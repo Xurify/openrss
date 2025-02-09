@@ -42,8 +42,15 @@ export const metadata: Metadata = {
     //url: "https://openrss.app",
     images: "/images/icon.svg",
   },
+  //metadataBase: new URL("https://www.openrss.app"),
+  alternates: {
+    canonical: "/",
+  },
+  referrer: "origin-when-cross-origin",
+  keywords: ["RSS", "audio", "player", "podcast", "feed"],
   //authors: [{ name: "Xurify", url: "https://openrss.app" }],
   creator: "Xurify",
+  publisher: "Xurify",
   icons: {
     icon: "/images/icon.svg",
   },
