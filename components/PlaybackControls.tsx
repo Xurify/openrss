@@ -70,7 +70,7 @@ export const PlaybackControls = () => {
   const isFavorite = favorites.includes(metadata.guid);
 
   return (
-    <div className="flex items-center bg-[#F4722F] border-2 border-black p-2 w-full h-24 mt-auto">
+    <div className="flex items-center bg-theme-main border-2 border-black p-2 w-full h-24 mt-auto">
       <div className="flex items-center space-x-3 w-1/3">
         <div className="h-20 w-20 min-w-20 min-h-20 mr-4 bg-white border-2 border-black">
           {metadata.imageUrl && (

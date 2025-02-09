@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: APP_NAME,
     title: {
       default: APP_NAME,
-      template: APP_TITLE_TEMPLATE, 
+      template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
     //url: "https://openrss.app",
@@ -77,9 +77,13 @@ export default function RootLayout({
           <AudioProvider>
             <div className="flex h-full">
               <Sidebar />
-              <div className="flex flex-1 flex-col p-6">
-                {children}
-                <PlaybackControls />
+              <div className="flex flex-col flex-1">
+                <div className="flex flex-1 flex-col overflow-y-auto scrollbar-gutter-stable">
+                  {children}
+                </div>
+                <div className="p-6">
+                  <PlaybackControls />
+                </div>
               </div>
             </div>
           </AudioProvider>

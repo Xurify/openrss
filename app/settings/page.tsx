@@ -15,12 +15,11 @@ import {
 
 export default function SettingsPage() {
   const { clearFeeds } = useStore();
-  const [open, setOpen] = useState(false); // State to control modal visibility
+  const [open, setOpen] = useState(false);
 
   const handleClearFeeds = async () => {
     await clearFeeds();
-    setOpen(false); // Close the modal after clearing
-    alert("All feeds cleared."); // Optional: provide user feedback
+    setOpen(false);
   };
 
   return (
