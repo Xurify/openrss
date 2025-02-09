@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SearchIcon, DownloadIcon, HeartIcon } from "lucide-react";
+import { SearchIcon, DownloadIcon, HeartIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
   CardContent,
@@ -17,7 +17,7 @@ import { type RssItem } from "@/types/rss";
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const { feeds, addFeeds, favorites, toggleFavorite } = useStore();
+  const { feeds, addFeeds, favorites, toggleFavorite, isLoading } = useStore();
   const { setAudioUrl } = useAudio();
 
   const handleImport = async () => {
@@ -61,88 +61,94 @@ export default function Home() {
           className="absolute top-1/2 left-6 -translate-x-1/2 -translate-y-1/2 text-black"
         />
       </div>
-      <Button
-        className="mt-4 p-6"
-        variant="flat-orange"
-        onClick={handleImport}
-      >
+      <Button className="mt-4 p-6" variant="flat-orange" onClick={handleImport}>
         Import
       </Button>
-
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {feeds.map((item, index) => (
-          <div
-            key={index}
-            className="flex flex-col border-b border-black bg-transparent"
-          >
-            <CardContent className="flex p-2">
-              {item.imageUrl && (
-                <div className="flex-shrink-0 mr-4">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="rounded-md w-[100px] h-[100px] object-cover"
-                    width={100}
-                    height={100}
-                  />
+      {isLoading ? (
+        // <div>Loading episodes...</div>
+        <div className="w-full flex justify-center items-center mt-8">
+          <Loader2 className="h-14 w-14 animate-spin text-black" />
+        </div>
+      ) : (
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {feeds.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col border-b border-black bg-transparent"
+            >
+              <CardContent className="flex p-2">
+                {item.imageUrl && (
+                  <div className="flex-shrink-0 mr-4">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="rounded-md w-[100px] h-[100px] object-cover"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                )}
+                <div>
+                  <CardTitle>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {item.channelTitle && (
+                        <span className="block text-sm font-normal text-gray-500">
+                          {item.channelTitle}
+                        </span>
+                      )}
+                      {truncateTitle(item.title)}
+                    </a>
+                  </CardTitle>
+                  <CardDescription>{formatDate(item.pubDate)}</CardDescription>
+                  <p className="mt-2 text-sm text-gray-600">
+                    {item.description}
+                  </p>
                 </div>
-              )}
-              <div>
-                <CardTitle>
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    {item.channelTitle && (
-                      <span className="block text-sm font-normal text-gray-500">
-                        {item.channelTitle}
-                      </span>
-                    )}
-                    {truncateTitle(item.title)}
-                  </a>
-                </CardTitle>
-                <CardDescription>{formatDate(item.pubDate)}</CardDescription>
-                <p className="mt-2 text-sm text-gray-600">{item.description}</p>
-              </div>
-            </CardContent>
-            <CardFooter className="mt-auto p-0 flex flex-col items-center">
-              <Button
-                variant="flat-orange"
-                className="w-full p-6"
-                onClick={() => handlePlayNow(item)}
-              >
-                Listen Now
-              </Button>
-              <div className="flex space-x-2 w-full">
+              </CardContent>
+              <CardFooter className="mt-auto p-0 flex flex-col items-center">
                 <Button
-                  variant="transparent"
-                  className="flex-1 h-12"
-                  onClick={() => toggleFavorite(item.guid)}
+                  variant="flat-orange"
+                  className="w-full p-6"
+                  onClick={() => handlePlayNow(item)}
                 >
-                  <HeartIcon
-                    className={`h-4 w-4 ${
-                      favorites.includes(item.guid) ? "fill-red-500 text-black" : "text-black"
-                    }`}
-                  />
-                  {favorites.includes(item.guid) ? "Unfavorite" : "Favorite"}
+                  Listen Now
                 </Button>
-                {item.enclosureUrl && (
+                <div className="flex space-x-2 w-full">
                   <Button
                     variant="transparent"
                     className="flex-1 h-12"
-                    onClick={() => window.open(item.enclosureUrl, "_blank")}
+                    onClick={() => toggleFavorite(item.guid)}
                   >
-                    <DownloadIcon className="h-4 w-4" />
-                    Download
+                    <HeartIcon
+                      className={`h-4 w-4 ${
+                        favorites.includes(item.guid)
+                          ? "fill-red-500 text-black"
+                          : "text-black"
+                      }`}
+                    />
+                    {favorites.includes(item.guid) ? "Unfavorite" : "Favorite"}
                   </Button>
-                )}
-              </div>
-            </CardFooter>
-          </div>
-        ))}
-      </div>
+                  {item.enclosureUrl && (
+                    <Button
+                      variant="transparent"
+                      className="flex-1 h-12"
+                      onClick={() => window.open(item.enclosureUrl, "_blank")}
+                    >
+                      <DownloadIcon className="h-4 w-4" />
+                      Download
+                    </Button>
+                  )}
+                </div>
+              </CardFooter>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

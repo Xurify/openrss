@@ -9,6 +9,7 @@ interface StoreContextType {
   favorites: string[];
   addFeeds: (newFeeds: RssItem[]) => Promise<void>;
   toggleFavorite: (guid: string) => Promise<void>;
+  isLoading: boolean;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -16,10 +17,12 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [feeds, setFeeds] = useState<RssItem[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getFeeds().then(setFeeds);
     getFavorites().then(favs => setFavorites(favs.map(f => f.guid)));
+    setIsLoading(false);
   }, []);
 
   const addFeeds = async (newFeeds: RssItem[]) => {
@@ -33,7 +36,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <StoreContext.Provider value={{ feeds, favorites, addFeeds, toggleFavorite }}>
+    <StoreContext.Provider value={{ feeds, favorites, addFeeds, toggleFavorite, isLoading }}>
       {children}
     </StoreContext.Provider>
   );
