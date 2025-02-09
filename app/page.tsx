@@ -2,23 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SearchIcon, DownloadIcon, HeartIcon, Loader2 } from "lucide-react";
+import { SearchIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardTitle,
-} from "@/components/ui/card";
-import { useAudio } from "@/contexts/AudioContext";
 import { useStore } from "@/contexts/StoreContext";
-import { parseRssFeed, formatDate, truncateTitle } from "@/utils/rss";
-import { type RssItem } from "@/types/rss";
+import { parseRssFeed } from "@/utils/rss";
+import { RssItemCard } from "@/components/RSSItemCard";
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const { feeds, addFeeds, favorites, toggleFavorite, isLoading } = useStore();
-  const { setAudioUrl } = useAudio();
 
   const handleImport = async () => {
     try {
@@ -33,17 +25,6 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error fetching or parsing RSS feed:", error);
-    }
-  };
-
-  const handlePlayNow = (item: RssItem) => {
-    if (item.enclosureUrl) {
-      setAudioUrl(item.enclosureUrl, {
-        title: item.title,
-        channelTitle: item.channelTitle,
-        imageUrl: item.imageUrl,
-        guid: item.guid,
-      });
     }
   };
 
@@ -71,81 +52,13 @@ export default function Home() {
         </div>
       ) : (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {feeds.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col border-b border-black bg-transparent"
-            >
-              <CardContent className="flex p-2">
-                {item.imageUrl && (
-                  <div className="flex-shrink-0 mr-4">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="rounded-md w-[100px] h-[100px] object-cover"
-                      width={100}
-                      height={100}
-                    />
-                  </div>
-                )}
-                <div>
-                  <CardTitle>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {item.channelTitle && (
-                        <span className="block text-sm font-normal text-gray-500">
-                          {item.channelTitle}
-                        </span>
-                      )}
-                      {truncateTitle(item.title)}
-                    </a>
-                  </CardTitle>
-                  <CardDescription>{formatDate(item.pubDate)}</CardDescription>
-                  <p className="mt-2 text-sm text-gray-600">
-                    {item.description}
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter className="mt-auto p-0 flex flex-col items-center">
-                <Button
-                  variant="flat-orange"
-                  className="w-full p-6"
-                  onClick={() => handlePlayNow(item)}
-                >
-                  Listen Now
-                </Button>
-                <div className="flex space-x-2 w-full">
-                  <Button
-                    variant="transparent"
-                    className="flex-1 h-12"
-                    onClick={() => toggleFavorite(item.guid)}
-                  >
-                    <HeartIcon
-                      className={`h-4 w-4 ${
-                        favorites.includes(item.guid)
-                          ? "fill-red-500 text-black"
-                          : "text-black"
-                      }`}
-                    />
-                    {favorites.includes(item.guid) ? "Unfavorite" : "Favorite"}
-                  </Button>
-                  {item.enclosureUrl && (
-                    <Button
-                      variant="transparent"
-                      className="flex-1 h-12"
-                      onClick={() => window.open(item.enclosureUrl, "_blank")}
-                    >
-                      <DownloadIcon className="h-4 w-4" />
-                      Download
-                    </Button>
-                  )}
-                </div>
-              </CardFooter>
-            </div>
+          {feeds.map((item) => (
+            <RssItemCard
+              key={item.guid}
+              item={item}
+              isFavorite={favorites.includes(item.guid)}
+              toggleFavorite={toggleFavorite}
+            />
           ))}
         </div>
       )}

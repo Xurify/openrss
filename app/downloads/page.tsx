@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "OpenRSS - Downloads",
-};
-
-export default function Page() {
+export default function DownloadsPage() {
   return (
-    <>
-      <h1>Downloads</h1>
-    </>
+    <div className="flex flex-col h-full w-full p-4">
+      <h1 className="text-2xl font-semibold">Downloads</h1>
+    </div>
   );
 }
