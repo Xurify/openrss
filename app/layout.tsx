@@ -16,7 +16,7 @@ const chivoMono = Chivo_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OpenRRS",
+  title: "OpenRSS",
   description: "RSS-based audio player",
 };
 
