@@ -13,157 +13,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import DOMPurify from "dompurify";
 import { useAudio } from "@/contexts/AudioContext";
-
-const RssItemSchema = z.object({
-  title: z.string(),
-  link: z.string(),
-  description: z.string(),
-  pubDate: z.string(),
-  guid: z.string(),
-  imageUrl: z.string().optional(),
-  channelTitle: z.string().optional(),
-  enclosureUrl: z.string().optional(),
-  isFavorite: z.boolean().optional(),
-});
-
-type RssItem = z.infer<typeof RssItemSchema>;
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useStore } from "@/contexts/StoreContext";
+import { parseRssFeed, formatDate, truncateTitle } from "@/utils/rss";
+import { RssItemSchema, type RssItem } from "@/types/rss";
 
 const RssFeedSchema = z.object({
   items: z.array(RssItemSchema),
 });
 
-type RssFeed = z.infer<typeof RssFeedSchema>;
-
-const extractAndTruncateDescription = (html: string): string => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const firstParagraph = doc.querySelector("p");
-
-  if (firstParagraph) {
-    const textContent = firstParagraph.textContent?.trim() ?? "";
-    const words = textContent.split(" ");
-    const truncated = words.slice(0, 25).join(" ");
-    return truncated + (words.length > 25 ? "..." : "");
-  }
-
-  return "";
-};
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const isLastYear = date.getFullYear() < now.getFullYear();
-
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: isLastYear ? "numeric" : undefined,
-  };
-
-  return date.toLocaleDateString(undefined, options);
-};
-
-const truncateTitle = (title: string, maxLength: number = 50): string => {
-  if (title.length > maxLength) {
-    return title.substring(0, maxLength) + "...";
-  }
-  return title;
-};
-
-const parseRssFeed = (xmlText: string): RssFeed => {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-
-  console.log(xmlText);
-
-  const channelTitle =
-    xmlDoc.querySelector("channel > title")?.textContent ?? "";
-
-  const items: RssItem[] = Array.from(xmlDoc.querySelectorAll("item")).map(
-    (item) => {
-      let imageUrl = "";
-
-      // TODO: Find a better way to get the image url
-      const enclosure = item.querySelector("enclosure");
-      if (enclosure && enclosure.getAttribute("type")?.startsWith("image")) {
-        imageUrl = enclosure.getAttribute("url") ?? "";
-      }
-
-      const mediaContent = item.querySelector("media\\:content");
-      if (
-        mediaContent &&
-        mediaContent.getAttribute("type")?.startsWith("image")
-      ) {
-        imageUrl = mediaContent.getAttribute("url") ?? "";
-      }
-
-      const itemImage = item.querySelector("image");
-      if (itemImage) {
-        imageUrl = itemImage.querySelector("url")?.textContent ?? "";
-      }
-
-      if (!imageUrl) {
-        const channelImage = xmlDoc.querySelector("channel > image");
-        if (channelImage) {
-          imageUrl = channelImage.querySelector("url")?.textContent ?? "";
-        }
-      }
-      const rawDescription =
-        item.querySelector("description")?.textContent ?? "";
-      const processedDescription =
-        extractAndTruncateDescription(rawDescription);
-      const episodeTitle = item.querySelector("title")?.textContent ?? "";
-
-      const enclosureUrl =
-        item.querySelector("enclosure")?.getAttribute("url") ?? "";
-
-      return {
-        title: episodeTitle,
-        link: item.querySelector("link")?.textContent ?? "",
-        description: processedDescription,
-        pubDate: item.querySelector("pubDate")?.textContent ?? "",
-        guid: item.querySelector("guid")?.textContent ?? "",
-        imageUrl,
-        channelTitle,
-        enclosureUrl,
-        isFavorite: false,
-      };
-    }
-  );
-
-  return { items };
-};
-
 export default function Home() {
   const [url, setUrl] = useState("");
-  const [feeds, setFeeds] = useState<RssFeed>({ items: [] });
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const { feeds, addFeeds, favorites, toggleFavorite } = useStore();
   const { setAudioUrl } = useAudio();
-
-  useEffect(() => {
-    const storedFeeds = localStorage.getItem("rssFeeds");
-    if (storedFeeds) {
-      try {
-        const parsedFeeds = RssFeedSchema.parse(JSON.parse(storedFeeds));
-        setFeeds(parsedFeeds);
-      } catch (error) {
-        console.error("Failed to load or validate stored feeds:", error);
-      }
-    }
-    const storedFavorites = localStorage.getItem("favorites");
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (feeds.items.length > 0) {
-      localStorage.setItem("rssFeeds", JSON.stringify(feeds));
-    }
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [feeds, favorites]);
 
   const handleImport = async () => {
     try {
@@ -171,19 +34,8 @@ export default function Home() {
       const data = await response.text();
       const parsedFeed = parseRssFeed(data);
 
-      const newItems = parsedFeed.items.filter(
-        (newItem) =>
-          !feeds.items.some(
-            (existingItem) => existingItem.link === newItem.link
-          )
-      );
-
-      console.log(parsedFeed);
-
-      if (newItems.length > 0) {
-        setFeeds((prevFeeds) => ({
-          items: [...prevFeeds.items, ...newItems],
-        }));
+      if (parsedFeed.items.length > 0) {
+        addFeeds(parsedFeed.items);
       } else {
         alert("No new items found in this feed");
       }
@@ -192,23 +44,13 @@ export default function Home() {
     }
   };
 
-  const toggleFavorite = (guid: string) => {
-    setFavorites((prevFavorites) => {
-      const isCurrentlyFavorite = prevFavorites.includes(guid);
-      if (isCurrentlyFavorite) {
-        return prevFavorites.filter((id) => id !== guid);
-      } else {
-        return [...prevFavorites, guid];
-      }
-    });
-  };
-
   const handlePlayNow = (item: RssItem) => {
     if (item.enclosureUrl) {
       setAudioUrl(item.enclosureUrl, {
         title: item.title,
         channelTitle: item.channelTitle,
         imageUrl: item.imageUrl,
+        guid: item.guid,
       });
     }
   };
@@ -235,7 +77,7 @@ export default function Home() {
       </button>
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {feeds.items.map((item, index) => (
+        {feeds.map((item, index) => (
           <div
             key={index}
             className="flex flex-col border-b border-black bg-transparent"
@@ -288,7 +130,7 @@ export default function Home() {
                 >
                   <HeartIcon
                     className={`h-4 w-4 ${
-                      favorites.includes(item.guid) ? "text-red-500" : ""
+                      favorites.includes(item.guid) ? "fill-red-500 text-black" : "text-black"
                     }`}
                   />
                   {favorites.includes(item.guid) ? "Unfavorite" : "Favorite"}

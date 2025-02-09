@@ -7,6 +7,7 @@ interface AudioMetadata {
   title: string;
   channelTitle?: string;
   imageUrl?: string;
+  guid: string;
 }
 
 interface AudioContextType {

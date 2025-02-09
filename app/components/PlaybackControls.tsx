@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useAudio } from "@/contexts/AudioContext";
+import { useStore } from "@/contexts/StoreContext";
 import { Slider } from "@/components/ui/slider";
 import {
   HeartIcon,
@@ -16,7 +18,6 @@ import {
   Volume1Icon,
   VolumeXIcon,
 } from "lucide-react";
-import { useState } from "react";
 
 export const PlaybackControls = () => {
   const {
@@ -28,6 +29,7 @@ export const PlaybackControls = () => {
     setVolume,
     metadata,
   } = useAudio();
+  const { favorites, toggleFavorite } = useStore();
   const [volume, setVolumeState] = useState([50]);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -69,6 +71,8 @@ export const PlaybackControls = () => {
 
   if (!metadata) return null;
 
+  const isFavorite = favorites.includes(metadata.guid);
+
   return (
     <div className="flex items-center bg-[#F4722F] border-2 border-black p-2 w-full h-24 mt-auto">
       <div className="flex items-center space-x-3 w-1/3">
@@ -81,14 +85,20 @@ export const PlaybackControls = () => {
             />
           )}
         </div>
-        <div className="w-full">
+        <div className="">
           <div className={"w-56 h-6 flex items-center overflow-hidden whitespace-nowrap"}>
             <p className={`text-sm font-bold ${titleStyle}`}>{metadata.title}</p>
           </div>
           <p className="text-sm truncate">{metadata.channelTitle}</p>
         </div>
-        <button className="text-black hover:text-black/60 transition-colors">
-          <HeartIcon size={25} />
+        <button
+          onClick={() => toggleFavorite(metadata.guid)}
+          className="text-black hover:text-black/60 transition-colors"
+        >
+          <HeartIcon
+            size={25}
+            className={isFavorite ? "fill-red-500 text-black" : "text-black"}
+          />
         </button>
       </div>
       <div className="flex flex-col items-center w-1/3">

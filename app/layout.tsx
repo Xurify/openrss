@@ -4,6 +4,7 @@ import { PlaybackControls } from "./components/PlaybackControls";
 import { Sidebar } from "./components/Sidebar";
 import "./globals.css";
 import { AudioProvider } from "@/contexts/AudioContext";
+import { StoreProvider } from "@/contexts/StoreContext";
 
 const chivoMono = Chivo_Mono({
   variable: "--font-chivo-Mono",
@@ -27,15 +28,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${chivoMono.className} antialiased`}>
-        <AudioProvider>
-          <div className="flex h-full">
-            <Sidebar />
-            <div className="flex flex-1 flex-col p-6">
-              {children}
-              <PlaybackControls />
+        <StoreProvider>
+          <AudioProvider>
+            <div className="flex h-full">
+              <Sidebar />
+              <div className="flex flex-1 flex-col p-6">
+                {children}
+                <PlaybackControls />
+              </div>
             </div>
-          </div>
-        </AudioProvider>
+          </AudioProvider>
+        </StoreProvider>
       </body>
     </html>
   );
