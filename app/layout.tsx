@@ -15,19 +15,37 @@ const chivoMono = Chivo_Mono({
   fallback: ["sans-serif"],
 });
 
+const APP_NAME = "OpenRSS";
+const APP_DESCRIPTION = "RSS-based audio player";
+const APP_TITLE_TEMPLATE = "%s - OpenRSS";
+
 export const metadata: Metadata = {
-  title: "OpenRSS",
-  description: "RSS-based audio player",
-  applicationName: "OpenRSS",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_NAME,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
   appleWebApp: {
     capable: true,
-    title: "OpenRSS",
+    title: APP_NAME,
     statusBarStyle: "black-translucent",
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_NAME,
+      template: APP_TITLE_TEMPLATE, 
+    },
+    description: APP_DESCRIPTION,
+    //url: "https://openrss.app",
+    images: "/images/icon.svg",
   },
   //authors: [{ name: "Xurify", url: "https://openrss.app" }],
   creator: "Xurify",
   icons: {
-    icon: "/icon-192x192.png",
+    icon: "/images/icon.svg",
   },
 };
 
