@@ -61,10 +61,6 @@ export const PlaybackControls = () => {
     return <Volume2Icon />;
   };
 
-  const handleProgressChange = (value: number[]) => {
-    seek(value[0]);
-  };
-
   const titleStyle = isPlaying
     ? "inline-block animate-marquee whitespace-nowrap"
     : "truncate";
