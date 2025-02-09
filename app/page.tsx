@@ -69,12 +69,13 @@ export default function Home() {
           className="absolute top-1/2 left-6 -translate-x-1/2 -translate-y-1/2 text-black"
         />
       </div>
-      <button
-        className="mt-4 bg-orange-500 hover:bg-orange-400 p-2 border border-black"
+      <Button
+        className="mt-4 p-6"
+        variant="flat-orange"
         onClick={handleImport}
       >
         Import
-      </button>
+      </Button>
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {feeds.map((item, index) => (
