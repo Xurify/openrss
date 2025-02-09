@@ -7,6 +7,13 @@ export const useAudioPlayer = (audioUrl: string) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+    if (!audioUrl) return;
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.remove();
+    }
+
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
@@ -18,6 +25,23 @@ export const useAudioPlayer = (audioUrl: string) => {
       setCurrentTime(audio.currentTime);
     });
 
+    audio.addEventListener('play', () => {
+      setIsPlaying(true);
+    });
+
+    audio.addEventListener('pause', () => {
+      setIsPlaying(false);
+    });
+
+    audio.addEventListener('ended', () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    });
+
+    audio.play().catch(error => {
+      console.error('Error playing audio:', error);
+    });
+
     return () => {
       audio.pause();
       audio.remove();
@@ -25,27 +49,26 @@ export const useAudioPlayer = (audioUrl: string) => {
   }, [audioUrl]);
 
   const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
     }
   };
 
   const seek = (time: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = time;
+    setCurrentTime(time);
   };
 
   const setVolume = (value: number) => {
-    if (audioRef.current) {
-      audioRef.current.volume = value / 100;
-    }
+    if (!audioRef.current) return;
+    audioRef.current.volume = value / 100;
   };
 
   return {

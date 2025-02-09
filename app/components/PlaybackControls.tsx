@@ -1,6 +1,6 @@
 "use client";
 
-import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+import { useAudio } from "@/contexts/AudioContext";
 import { Slider } from "@/components/ui/slider";
 import {
   HeartIcon,
@@ -18,28 +18,23 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const AUDIO_URL = (process.env.NEXT_PUBLIC_AUDIO_URL || 'https://www.buzzsprout.com/2260539/episodes/16398459-seven-shipping-principles.mp3') as string;
-
 export const PlaybackControls = () => {
-  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } =
-    useAudioPlayer(AUDIO_URL);
+  const {
+    duration,
+    currentTime,
+    isPlaying,
+    togglePlay,
+    seek,
+    setVolume,
+    metadata,
+  } = useAudio();
   const [volume, setVolumeState] = useState([50]);
   const [isMuted, setIsMuted] = useState(false);
 
-  const formatTime = (seconds: number) => {
-    const roundedSeconds = Math.round(seconds);
-    const hours = Math.floor(roundedSeconds / 3600);
-    const minutes = Math.floor((roundedSeconds % 3600) / 60);
-    const remainingSeconds = roundedSeconds % 60;
-
-    if (hours > 0) {
-      return `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-    }
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-      .toString()
-      .padStart(2, "0")}`;
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handlePlayPause = () => togglePlay();
@@ -47,10 +42,9 @@ export const PlaybackControls = () => {
   const handleRewind15 = () => seek(Math.max(0, currentTime - 15));
   const handleForward15 = () => seek(Math.min(duration, currentTime + 15));
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolumeState(value);
-    setVolume(isMuted ? 0 : value[0]);
-    if (value[0] > 0) setIsMuted(false);
+  const handleVolumeChange = (newVolume: number[]) => {
+    setVolumeState(newVolume);
+    setVolume(newVolume[0]);
   };
 
   const toggleMute = () => {
@@ -59,25 +53,39 @@ export const PlaybackControls = () => {
   };
 
   const VolumeIconComponent = () => {
-    if (isMuted || volume[0] === 0) return <VolumeXIcon size={25} />;
-    if (volume[0] < 33) return <VolumeIcon size={25} />;
-    if (volume[0] < 66) return <Volume1Icon size={25} />;
-    return <Volume2Icon size={25} />;
+    if (isMuted || volume[0] === 0) return <VolumeXIcon />;
+    if (volume[0] < 30) return <VolumeIcon />;
+    if (volume[0] < 70) return <Volume1Icon />;
+    return <Volume2Icon />;
   };
 
   const handleProgressChange = (value: number[]) => {
     seek(value[0]);
   };
 
-  const progressPercentage = (currentTime / duration) * 100;
+  const titleStyle = isPlaying
+    ? "inline-block animate-marquee whitespace-nowrap"
+    : "truncate";
+
+  if (!metadata) return null;
 
   return (
     <div className="flex items-center bg-[#F4722F] border-2 border-black p-2 w-full h-24 mt-auto">
       <div className="flex items-center space-x-3 w-1/3">
-        <div className="h-20 w-20 mr-4 bg-white border-2 border-black"></div>
-        <div>
-          <h1 className="text-2xl font-bold">Name</h1>
-          <p className="text-sm">Title</p>
+        <div className="h-20 w-20 min-w-20 min-h-20 mr-4 bg-white border-2 border-black">
+          {metadata.imageUrl && (
+            <img
+              src={metadata.imageUrl}
+              alt={metadata.title}
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+        <div className="w-full">
+          <div className={"w-56 h-6 flex items-center overflow-hidden whitespace-nowrap"}>
+            <p className={`text-sm font-bold ${titleStyle}`}>{metadata.title}</p>
+          </div>
+          <p className="text-sm truncate">{metadata.channelTitle}</p>
         </div>
         <button className="text-black hover:text-black/60 transition-colors">
           <HeartIcon size={25} />
@@ -131,7 +139,7 @@ export const PlaybackControls = () => {
           <Slider
             className="w-full cursor-pointer"
             value={[currentTime]}
-            onValueChange={handleProgressChange}
+            onValueChange={(value) => seek(value[0])}
             max={duration}
             step={1}
           />

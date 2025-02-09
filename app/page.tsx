@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import DOMPurify from "dompurify";
+import { useAudio } from "@/contexts/AudioContext";
 
 const RssItemSchema = z.object({
   title: z.string(),
@@ -139,6 +140,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [feeds, setFeeds] = useState<RssFeed>({ items: [] });
   const [favorites, setFavorites] = useState<string[]>([]);
+  const { setAudioUrl } = useAudio();
 
   useEffect(() => {
     const storedFeeds = localStorage.getItem("rssFeeds");
@@ -199,6 +201,16 @@ export default function Home() {
         return [...prevFavorites, guid];
       }
     });
+  };
+
+  const handlePlayNow = (item: RssItem) => {
+    if (item.enclosureUrl) {
+      setAudioUrl(item.enclosureUrl, {
+        title: item.title,
+        channelTitle: item.channelTitle,
+        imageUrl: item.imageUrl,
+      });
+    }
   };
 
   return (
@@ -264,7 +276,7 @@ export default function Home() {
               <Button
                 variant="flat-orange"
                 className="w-full p-6"
-                onClick={() => window.open(item.link, "_blank")}
+                onClick={() => handlePlayNow(item)}
               >
                 Listen Now
               </Button>
