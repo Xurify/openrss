@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 
+// You may want to use a more robust revision to cache
+// files more efficiently.
+// A viable option is `git rev-parse HEAD`.
+const revision = crypto.randomUUID();
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -45,6 +50,8 @@ const nextConfig: NextConfig = {
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
+  cacheOnNavigation: true,
+  additionalPrecacheEntries: [{ url: "/~offline", revision }],
 });
 
 export default withSerwist(nextConfig);
