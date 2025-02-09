@@ -5,7 +5,7 @@ interface AppDB extends DBSchema {
   feeds: {
     key: string;
     value: RssItem;
-    indexes: { 'by-date': string };
+    indexes: { 'by-date': string, 'by-feedUrl': string };
   };
   favorites: {
     key: string;
@@ -23,6 +23,7 @@ export async function initDB() {
         keyPath: 'guid'
       });
       feedStore.createIndex('by-date', 'pubDate');
+      feedStore.createIndex('by-feedUrl', 'feedUrl');
       
       db.createObjectStore('favorites', {
         keyPath: 'guid'
@@ -68,4 +69,11 @@ export async function toggleFavorite(guid: string) {
 export async function getFavorites() {
   const db = await getDB();
   return await db.getAll('favorites');
+}
+
+export async function clearFeeds() {
+  const db = await getDB();
+  const tx = db.transaction('feeds', 'readwrite');
+  await tx.store.clear();
+  await tx.done;
 }

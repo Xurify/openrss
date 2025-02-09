@@ -36,7 +36,7 @@ export const truncateTitle = (title: string, maxLength: number = 50): string => 
   return title;
 };
 
-export const parseRssFeed = (xmlText: string): RssFeed => {
+export const parseRssFeed = (xmlText: string, feedUrl: string): RssFeed => {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
@@ -83,6 +83,7 @@ export const parseRssFeed = (xmlText: string): RssFeed => {
         imageUrl,
         channelTitle,
         enclosureUrl,
+        feedUrl,
       };
     }
   );

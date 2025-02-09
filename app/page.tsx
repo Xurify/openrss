@@ -1,22 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, Loader2 } from "lucide-react";
-import { useState } from "react";
 import { useStore } from "@/contexts/StoreContext";
 import { parseRssFeed } from "@/utils/rss";
 import { RssItemCard } from "@/components/RSSItemCard";
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const { feeds, addFeeds, favorites, toggleFavorite, isLoading } = useStore();
+  const { addFeeds, favorites, toggleFavorite, isLoading, getLatestFeeds } = useStore();
+
+  const feeds = getLatestFeeds();
 
   const handleImport = async () => {
     try {
       const response = await fetch(url);
+
       const data = await response.text();
-      const parsedFeed = parseRssFeed(data);
+      const parsedFeed = parseRssFeed(data, url);
 
       if (parsedFeed.items.length > 0) {
         addFeeds(parsedFeed.items);
@@ -55,6 +58,8 @@ export default function Home() {
           {feeds.map((item) => (
             <RssItemCard
               key={item.guid}
+
+
               item={item}
               isFavorite={favorites.includes(item.guid)}
               toggleFavorite={toggleFavorite}
