@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Chivo_Mono } from "next/font/google";
-import { PlaybackControls } from "./components/PlaybackControls";
-import { Sidebar } from "./components/Sidebar";
-import "./globals.css";
+import { PlaybackControls } from "@/components/PlaybackControls";
+import { Sidebar } from "@/components/Sidebar";
 import { AudioProvider } from "@/contexts/AudioContext";
 import { StoreProvider } from "@/contexts/StoreContext";
+import "./globals.css";
 
 const chivoMono = Chivo_Mono({
   variable: "--font-chivo-Mono",
