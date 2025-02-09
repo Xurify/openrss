@@ -58,7 +58,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-full w-full p-4">
       <h1 className="text-2xl font-semibold">Import RSS Feed</h1>
-      <div className="relative bg-yellow-200">
+      <div className="relative bg-white">
         <Input
           className="rounded-none p-6 pl-10 border-black"
           value={url}
