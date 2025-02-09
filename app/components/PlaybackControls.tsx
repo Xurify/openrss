@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const AUDIO_URL =
-  "https://www.buzzsprout.com/2260539/episodes/16398459-seven-shipping-principles.mp3";
+const AUDIO_URL = (process.env.NEXT_PUBLIC_AUDIO_URL || 'https://www.buzzsprout.com/2260539/episodes/16398459-seven-shipping-principles.mp3') as string;
 
 export const PlaybackControls = () => {
   const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } =

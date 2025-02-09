@@ -1,8 +1,8 @@
 import {
   HomeIcon,
   DownloadIcon,
-  BookmarkIcon,
   SettingsIcon,
+  HeartIcon,
 } from "lucide-react";
 
 export const Sidebar = () => {
@@ -14,7 +14,7 @@ export const Sidebar = () => {
           <span className="text-xs font-medium">Home</span>
         </button>
         <button className="flex flex-col items-center gap-1 p-3 hover:text-theme-main rounded-lg transition-colors">
-          <BookmarkIcon size={28} />
+          <HeartIcon size={28} />
           <span className="text-xs font-medium">Saved</span>
         </button>
         <button className="flex flex-col items-center gap-1 p-3 hover:text-theme-main rounded-lg transition-colors">
