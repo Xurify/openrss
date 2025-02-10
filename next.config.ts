@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
     const styleSrcDomains = [
       "'self'",
       "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com",
     ];
 
     return [
@@ -40,7 +41,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self'; script-src 'self'; connect-src ${connectSrcDomains.join(' ')}; style-src ${styleSrcDomains.join(' ')}`,
+            value: `default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src ${connectSrcDomains.join(' ')}; style-src ${styleSrcDomains.join(' ')}`,
           },
         ],
       },
