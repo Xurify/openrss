@@ -8,14 +8,14 @@ import { useStore } from "@/contexts/StoreContext";
 import { RssItemCard } from "@/components/RSSItemCard";
 
 export default function Home() {
-  const [url, setUrl] = useState("");
+  const [importFeedUrl, setImportFeedUrl] = useState("");
   const { addFeeds, favorites, toggleFavorite, isLoading, getLatestFeeds } = useStore();
 
   const feeds = getLatestFeeds();
 
   const handleImport = async () => {
     try {
-      const response = await fetch(`/api/rss-parser?url=${url}`);
+      const response = await fetch(`/api/rss-parser?importFeedUrl=${importFeedUrl}`);
       const data = await response.json();
       const parsedEpisodes = data.data.items || [];
       if (parsedEpisodes.length > 0) {
@@ -29,14 +29,18 @@ export default function Home() {
     }
   };
 
+  const handleChangeImportFeedUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportFeedUrl(e.target.value);
+  };
+
   return (
     <div className="flex flex-col h-full w-full p-4">
       <h1 className="text-2xl font-semibold">Import RSS Feed</h1>
       <div className="relative bg-white/80">
         <Input
           className="rounded-none p-6 pl-10 border-black"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={importFeedUrl}
+          onChange={handleChangeImportFeedUrl}
         />
         <SearchIcon
           size={20}
