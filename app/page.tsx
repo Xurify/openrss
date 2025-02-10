@@ -6,7 +6,7 @@ import { Input } from "@/components/core/input";
 import { SearchIcon, Loader2 } from "lucide-react";
 import { useStore } from "@/contexts/StoreContext";
 import { RssItemCard } from "@/components/RSSItemCard";
-import { parseRssFeed } from "@/utils/rss";
+//import { parseRssFeed } from "@/utils/rss";
 
 export default function Home() {
   const [importFeedUrl, setImportFeedUrl] = useState("");
