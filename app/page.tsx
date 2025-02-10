@@ -17,15 +17,14 @@ export default function Home() {
   const handleImport = async () => {
     try {
       const response = await fetch(`/api/rss-parser?url=${url}`);
-
-      const data = await response.text();
-      const parsedFeed = await parseRssFeed(data, url);
-
-      if (parsedFeed.items.length > 0) {
-        addFeeds(parsedFeed.items);
+      const data = await response.json();
+      const parsedEpisodes = data.data.items || [];
+      if (parsedEpisodes.length > 0) {
+        addFeeds(parsedEpisodes);
       } else {
-        alert("No new items found in this feed");
+        console.log("No new items found in this feed");
       }
+
     } catch (error) {
       console.error("Error fetching or parsing RSS feed:", error);
     }
