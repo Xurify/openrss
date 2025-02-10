@@ -15,7 +15,7 @@ export default function Home() {
 
   const handleImport = async () => {
     try {
-      const response = await fetch(`/api/rss-parser?importFeedUrl=${importFeedUrl}`);
+      const response = await fetch(`/api/rss-parser?url=${importFeedUrl}`);
       const data = await response.json();
       const parsedEpisodes = data.data.items || [];
       if (parsedEpisodes.length > 0) {
