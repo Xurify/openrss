@@ -10,7 +10,9 @@ import { RssItemCard } from "@/components/RSSItemCard";
 
 export default function Home() {
   const [importFeedUrl, setImportFeedUrl] = useState("");
-  const { addFeeds, favorites, toggleFavorite, isLoading, getLatestFeeds } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { addFeeds, favorites, toggleFavorite, getLatestFeeds } = useStore();
+
 
   const feeds = getLatestFeeds();
 
@@ -33,11 +35,13 @@ export default function Home() {
 
   const handleImport = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`/api/rss-parser?url=${importFeedUrl}`);
       const data = await response.json();
       const parsedEpisodes = data.data.items || [];
       if (parsedEpisodes.length > 0) {
         addFeeds(parsedEpisodes);
+        setIsLoading(false);
       } else {
         console.log("No new items found in this feed");
       }
@@ -65,8 +69,8 @@ export default function Home() {
           className="absolute top-1/2 left-6 -translate-x-1/2 -translate-y-1/2 text-black"
         />
       </div>
-      <Button className="mt-4 p-6" variant="default" onClick={handleImport}>
-        Import
+      <Button className="mt-4 p-6" variant="default" onClick={handleImport} disabled={isLoading}>
+        {isLoading ? "Importing..." : "Import"}
       </Button>
       {isLoading ? (
         // <div>Loading episodes...</div>
