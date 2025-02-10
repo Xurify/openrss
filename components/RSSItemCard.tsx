@@ -5,7 +5,7 @@ import {
   CardFooter,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/core/button";
 import { HeartIcon, DownloadIcon } from "lucide-react";
 import { formatDate, truncateTitle } from "@/utils/rss";
 import { type RssItem } from "@/types/rss";
@@ -69,7 +69,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
       </CardContent>
       <CardFooter className="mt-auto p-0 flex flex-col items-center">
         <Button
-          variant="flat-orange"
+          variant="default"
           className="w-full p-6"
           onClick={() => handlePlayNow(item)}
         >

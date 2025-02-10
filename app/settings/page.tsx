@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useStore } from "@/contexts/StoreContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/core/button";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +41,7 @@ export default function SettingsPage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button

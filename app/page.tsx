@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/core/button";
+import { Input } from "@/components/core/input";
 import { SearchIcon, Loader2 } from "lucide-react";
 import { useStore } from "@/contexts/StoreContext";
 import { parseRssFeed } from "@/utils/rss";
@@ -45,7 +45,7 @@ export default function Home() {
           className="absolute top-1/2 left-6 -translate-x-1/2 -translate-y-1/2 text-black"
         />
       </div>
-      <Button className="mt-4 p-6" variant="flat-orange" onClick={handleImport}>
+      <Button className="mt-4 p-6" variant="default" onClick={handleImport}>
         Import
       </Button>
       {isLoading ? (
