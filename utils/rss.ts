@@ -1,7 +1,7 @@
-import Parser from 'rss-parser';
+import Parser from "rss-parser";
 import { RssFeed, RssItem } from "@/types/rss";
 
-export const extractAndTruncateDescription = (html: string): string => {
+const extractAndTruncateDescription = (html: string): string => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const firstParagraph = doc.querySelector("p");
@@ -30,33 +30,47 @@ export const formatDate = (dateString: string): string => {
   return date.toLocaleDateString(undefined, options);
 };
 
-export const truncateTitle = (title: string, maxLength: number = 50): string => {
+export const truncateTitle = (
+  title: string,
+  maxLength: number = 50
+): string => {
   if (title.length > maxLength) {
     return title.substring(0, maxLength) + "...";
   }
   return title;
 };
 
-export const parseRssFeed = async (xmlText: string, feedUrl: string): Promise<RssFeed> => {
+export const parseRssFeed = async (
+  xmlText: string,
+  feedUrl: string,
+  getDescription: (rawDescription: string) => string = extractAndTruncateDescription
+): Promise<RssFeed> => {
   const parser = new Parser();
 
   try {
     const feed = await parser.parseString(xmlText);
-
-    console.log('feed3', feed);
-
-
     const channelTitle = feed.title ?? "";
 
     const items: RssItem[] = feed.items.map((item) => {
       let imageUrl = "";
 
-      if (item.enclosure && item.enclosure.type && item.enclosure.type.startsWith("image")) {
+      if (
+        item.enclosure &&
+        item.enclosure.type &&
+        item.enclosure.type.startsWith("image")
+      ) {
         imageUrl = item.enclosure.url ?? "";
       }
 
-      if (item['media:content'] && Array.isArray(item['media:content']) && item['media:content'].length > 0 && item['media:content'][0].$.url && item['media:content'][0].$.type && item['media:content'][0].$.type.startsWith("image")) {
-        imageUrl = item['media:content'][0].$.url ?? "";
+      if (
+        item["media:content"] &&
+        Array.isArray(item["media:content"]) &&
+        item["media:content"].length > 0 &&
+        item["media:content"][0].$.url &&
+        item["media:content"][0].$.type &&
+        item["media:content"][0].$.type.startsWith("image")
+      ) {
+        imageUrl = item["media:content"][0].$.url ?? "";
       }
 
       if (!imageUrl && item.image) {
@@ -68,7 +82,7 @@ export const parseRssFeed = async (xmlText: string, feedUrl: string): Promise<Rs
       }
 
       const rawDescription = item.description ?? item.content ?? "";
-      const processedDescription = extractAndTruncateDescription(rawDescription);
+      const processedDescription = getDescription(rawDescription);
       const episodeTitle = item.title ?? "";
       const link = item.link ?? "";
       const pubDate = item.pubDate ?? "";
@@ -89,9 +103,8 @@ export const parseRssFeed = async (xmlText: string, feedUrl: string): Promise<Rs
     });
 
     return { items };
-
   } catch (error) {
     console.error("Error parsing RSS feed with rss-parser:", error);
     return { items: [] };
   }
-}; 
+};

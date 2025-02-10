@@ -10,19 +10,6 @@ const revision = process.env.VERCEL_GIT_COMMIT_SHA || crypto.randomUUID();
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   async headers() {
-    const connectSrcDomains = [
-      "'self'",
-      "https://openrss.vercel.app",
-      "https://fonts.googleapis.com",
-      "https://fonts.gstatic.com",
-    ];
-
-    const styleSrcDomains = [
-      "'self'",
-      "https://fonts.googleapis.com",
-      "https://fonts.gstatic.com",
-    ];
-
     return [
       {
         source: '/(.*)',
@@ -38,10 +25,6 @@ const nextConfig: NextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: `default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src ${connectSrcDomains.join(' ')}; style-src ${styleSrcDomains.join(' ')}`,
           },
         ],
       },
