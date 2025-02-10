@@ -5,7 +5,6 @@ import { Button } from "@/components/core/button";
 import { Input } from "@/components/core/input";
 import { SearchIcon, Loader2 } from "lucide-react";
 import { useStore } from "@/contexts/StoreContext";
-import { parseRssFeed } from "@/utils/rss";
 import { RssItemCard } from "@/components/RSSItemCard";
 
 export default function Home() {
