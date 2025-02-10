@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardFooter,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/core/card";
 import { Button } from "@/components/core/button";
 import { HeartIcon, DownloadIcon } from "lucide-react";
 import { formatDate, truncateTitle } from "@/utils/rss";
