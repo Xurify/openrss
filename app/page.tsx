@@ -14,38 +14,38 @@ export default function Home() {
 
   const feeds = getLatestFeeds();
 
-  const handleImport = async () => {
-    try {
-      const response = await fetch(importFeedUrl);
-
-      const data = await response.text();
-      const parsedFeed = await parseRssFeed(data, importFeedUrl);
-
-      if (parsedFeed.items.length > 0) {
-        addFeeds(parsedFeed.items);
-      } else {
-        alert("No new items found in this feed");
-      }
-    } catch (error) {
-      console.error("Error fetching or parsing RSS feed:", error);
-    }
-  };
-
-  // const handleImportServer = async () => {
+  // const handleImport = async () => {
   //   try {
-  //     const response = await fetch(`/api/rss-parser?url=${importFeedUrl}`);
-  //     const data = await response.json();
-  //     const parsedEpisodes = data.data.items || [];
-  //     if (parsedEpisodes.length > 0) {
-  //       addFeeds(parsedEpisodes);
-  //     } else {
-  //       console.log("No new items found in this feed");
-  //     }
+  //     const response = await fetch(importFeedUrl);
 
+  //     const data = await response.text();
+  //     const parsedFeed = await parseRssFeed(data, importFeedUrl);
+
+  //     if (parsedFeed.items.length > 0) {
+  //       addFeeds(parsedFeed.items);
+  //     } else {
+  //       alert("No new items found in this feed");
+  //     }
   //   } catch (error) {
   //     console.error("Error fetching or parsing RSS feed:", error);
   //   }
   // };
+
+  const handleImport = async () => {
+    try {
+      const response = await fetch(`/api/rss-parser?url=${importFeedUrl}`);
+      const data = await response.json();
+      const parsedEpisodes = data.data.items || [];
+      if (parsedEpisodes.length > 0) {
+        addFeeds(parsedEpisodes);
+      } else {
+        console.log("No new items found in this feed");
+      }
+
+    } catch (error) {
+      console.error("Error fetching or parsing RSS feed:", error);
+    }
+  };
 
   const handleChangeImportFeedUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImportFeedUrl(e.target.value);
