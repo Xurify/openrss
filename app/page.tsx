@@ -19,7 +19,7 @@ export default function Home() {
       const response = await fetch(url);
 
       const data = await response.text();
-      const parsedFeed = parseRssFeed(data, url);
+      const parsedFeed = await parseRssFeed(data, url);
 
       if (parsedFeed.items.length > 0) {
         addFeeds(parsedFeed.items);
