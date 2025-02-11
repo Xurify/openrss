@@ -22,7 +22,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
 
   const handlePlayNow = (item: RssItem) => {
     if (item.url) {
-      setCurrentEpisode(item.url, {
+      setCurrentEpisode({
         url: item.url,
         title: item.title,
         channelTitle: item.channelTitle,
