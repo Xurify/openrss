@@ -1,11 +1,11 @@
-import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import type { RssItem } from '@/types/rss';
+import { openDB, DBSchema, IDBPDatabase } from "idb";
+import type { RssItem } from "@/types/rss";
 
 interface AppDB extends DBSchema {
-  feeds: {
+  episodes: {
     key: string;
     value: RssItem;
-    indexes: { 'by-date': string, 'by-feedUrl': string };
+    indexes: { "by-date": string; "by-feedUrl": string };
   };
   favorites: {
     key: string;
@@ -13,20 +13,20 @@ interface AppDB extends DBSchema {
   };
 }
 
-const DB_NAME = 'openrss-db';
+const DB_NAME = "openrss-db";
 const DB_VERSION = 1;
 
 export async function initDB() {
   return await openDB<AppDB>(DB_NAME, DB_VERSION, {
     upgrade(db) {
-      const feedStore = db.createObjectStore('feeds', {
-        keyPath: 'guid'
+      const episodeStore = db.createObjectStore("episodes", {
+        keyPath: "guid",
       });
-      feedStore.createIndex('by-date', 'pubDate');
-      feedStore.createIndex('by-feedUrl', 'feedUrl');
-      
-      db.createObjectStore('favorites', {
-        keyPath: 'guid'
+      episodeStore.createIndex("by-date", "pubDate");
+      episodeStore.createIndex("by-feedUrl", "feedUrl");
+
+      db.createObjectStore("favorites", {
+        keyPath: "guid",
       });
     },
   });
@@ -41,23 +41,23 @@ export function getDB() {
   return dbPromise;
 }
 
-export async function addFeeds(feeds: RssItem[]) {
+export async function addEpisodes(episodes: RssItem[]) {
   const db = await getDB();
-  const tx = db.transaction('feeds', 'readwrite');
-  await Promise.all(feeds.map(feed => tx.store.put(feed)));
+  const tx = db.transaction("episodes", "readwrite");
+  await Promise.all(episodes.map((episode) => tx.store.put(episode)));
   await tx.done;
 }
 
-export async function getFeeds() {
+export async function getEpisodes() {
   const db = await getDB();
-  return await db.getAllFromIndex('feeds', 'by-date');
+  return await db.getAllFromIndex("episodes", "by-date");
 }
 
 export async function toggleFavorite(guid: string) {
   const db = await getDB();
-  const tx = db.transaction('favorites', 'readwrite');
+  const tx = db.transaction("favorites", "readwrite");
   const exists = await tx.store.get(guid);
-  
+
   if (exists) {
     await tx.store.delete(guid);
   } else {
@@ -68,12 +68,44 @@ export async function toggleFavorite(guid: string) {
 
 export async function getFavorites() {
   const db = await getDB();
-  return await db.getAll('favorites');
+  return await db.getAll("favorites");
 }
 
-export async function clearFeeds() {
+async function deleteAllEpisodes() {
   const db = await getDB();
-  const tx = db.transaction('feeds', 'readwrite');
+  const tx = db.transaction("episodes", "readwrite");
   await tx.store.clear();
   await tx.done;
+}
+
+export async function deleteAllFavorites() {
+  const db = await getDB();
+  const tx = db.transaction("favorites", "readwrite");
+  await tx.store.clear();
+  await tx.done;
+}
+
+export async function deleteEpisodes(removeAll: boolean = false) {
+  if (removeAll) {
+    await deleteAllFavorites();
+    await deleteAllEpisodes();
+  } else {
+    const db = await getDB();
+
+    const tx = db.transaction(["episodes", "favorites"], "readwrite");
+
+    const favorites = await tx.objectStore("favorites").getAll();
+    const favoriteGuids = new Set(favorites.map((fav) => fav.guid));
+
+    let cursor = await tx.objectStore("episodes").openCursor();
+
+    while (cursor) {
+      if (!favoriteGuids.has(cursor.value.guid)) {
+        await cursor.delete();
+      }
+      cursor = await cursor.continue();
+    }
+
+    await tx.done;
+  }
 }

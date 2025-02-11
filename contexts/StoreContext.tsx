@@ -1,15 +1,29 @@
 "use client";
 
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { getFeeds, addFeeds as dbAddFeeds, getFavorites, toggleFavorite as dbToggleFavorite, clearFeeds as clearFeedsFromDb } from '@/utils/db';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
+import {
+  getEpisodes,
+  addEpisodes as dbAddEpisodes,
+  getFavorites,
+  toggleFavorite as dbToggleFavorite,
+  deleteEpisodes as clearEpisodesFromDb,
+  deleteAllFavorites as clearFavoritesFromDb,
+} from "@/utils/db";
 import type { RssItem } from "@/types/rss";
 
 interface StoreContextType {
-  feeds: RssItem[];
+  episodes: RssItem[];
   favorites: string[];
-  addFeeds: (newFeeds: RssItem[]) => Promise<void>;
-  clearFeeds: () => Promise<void>;
-  getLatestFeeds: () => RssItem[];
+  addEpisodes: (newEpisodes: RssItem[]) => Promise<void>;
+  deleteEpisodes: (removeAll?: boolean) => Promise<void>;
+  clearAllFavorites: () => Promise<void>;
+  getLatestEpisodes: () => RssItem[];
   toggleFavorite: (guid: string) => Promise<void>;
   isLoading: boolean;
 }
@@ -17,33 +31,44 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [feeds, setFeeds] = useState<RssItem[]>([]);
+  const [episodes, setEpisodes] = useState<RssItem[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getFeeds().then(setFeeds);
-    getFavorites().then(favs => setFavorites(favs.map(f => f.guid)));
+    getEpisodes().then(setEpisodes);
+    getFavorites().then((favs) => setFavorites(favs.map((f) => f.guid)));
     setIsLoading(false);
   }, []);
 
-  const addFeeds = async (newFeeds: RssItem[]) => {
-    await dbAddFeeds(newFeeds);
-    setFeeds(await getFeeds());
+  const addEpisodes = async (newEpisodes: RssItem[]) => {
+    await dbAddEpisodes(newEpisodes);
+    setEpisodes(await getEpisodes());
   };
 
   const toggleFavorite = async (guid: string) => {
     await dbToggleFavorite(guid);
-    setFavorites(await getFavorites().then(favs => favs.map(f => f.guid)));
+    setFavorites(await getFavorites().then((favs) => favs.map((f) => f.guid)));
   };
 
-  const clearFeeds = async () => {
-    await clearFeedsFromDb();
-    setFeeds([]);
+  const deleteEpisodes = async (removeAll: boolean = false) => {
+    await clearEpisodesFromDb(removeAll);
+    if (removeAll) {
+      setEpisodes([]);
+      setFavorites([]);
+    } else {
+      const newEpisodes = await getEpisodes();
+      setEpisodes(newEpisodes);
+    }
   };
 
-  const getLatestFeeds = () => {
-    return [...feeds].sort((a, b) => {
+  const clearAllFavorites = async () => {
+    await clearFavoritesFromDb();
+    setFavorites([]);
+  };
+
+  const getLatestEpisodes = () => {
+    return [...episodes].sort((a, b) => {
       const dateA = new Date(a.pubDate);
       const dateB = new Date(b.pubDate);
       return dateB.getTime() - dateA.getTime();
@@ -51,7 +76,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <StoreContext.Provider value={{ feeds, favorites, addFeeds, toggleFavorite, isLoading, clearFeeds, getLatestFeeds }}>
+    <StoreContext.Provider
+      value={{
+        episodes,
+        favorites,
+        addEpisodes,
+        toggleFavorite,
+        isLoading,
+        deleteEpisodes,
+        clearAllFavorites,
+        getLatestEpisodes,
+      }}
+    >
       {children}
     </StoreContext.Provider>
   );
@@ -60,7 +96,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 export function useStore() {
   const context = useContext(StoreContext);
   if (context === undefined) {
-    throw new Error('useStore must be used within a StoreProvider');
+    throw new Error("useStore must be used within a StoreProvider");
   }
   return context;
-} 
+}

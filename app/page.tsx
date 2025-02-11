@@ -11,10 +11,9 @@ import { RssItemCard } from "@/components/RSSItemCard";
 export default function Home() {
   const [importFeedUrl, setImportFeedUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { addFeeds, favorites, toggleFavorite, getLatestFeeds } = useStore();
+  const { addEpisodes, favorites, toggleFavorite, getLatestEpisodes } = useStore();
 
-
-  const feeds = getLatestFeeds();
+  const episodes = getLatestEpisodes();
 
   // const handleImport = async () => {
   //   try {
@@ -40,7 +39,7 @@ export default function Home() {
       const data = await response.json();
       const parsedEpisodes = data.data.items || [];
       if (parsedEpisodes.length > 0) {
-        addFeeds(parsedEpisodes);
+        addEpisodes(parsedEpisodes);
         setIsLoading(false);
       } else {
         console.log("No new items found in this feed");
@@ -79,7 +78,7 @@ export default function Home() {
         </div>
       ) : (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {feeds.map((item) => (
+          {episodes.map((item) => (
             <RssItemCard
               key={item.guid}
               item={item}

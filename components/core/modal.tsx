@@ -7,6 +7,7 @@ interface ModalProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
+  children?: React.ReactNode;
   cancelText?: string;
   actionText?: string;
   onAction?: () => void | Promise<void>;
@@ -18,6 +19,7 @@ export const Modal = ({
   onOpenChange,
   title,
   description,
+  children,
   cancelText = "Cancel",
   actionText = "Confirm",
   onAction,
@@ -81,8 +83,9 @@ export const Modal = ({
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             {description}
           </p>
+          {children}
         </div>
-
+        
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
           <Button
             type="button"
