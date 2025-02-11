@@ -34,9 +34,17 @@ export const PlaybackControls = () => {
   const [isMuted, setIsMuted] = useState(false);
 
   const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    } else {
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
   };
 
   const handlePlayPause = () => togglePlay();
@@ -82,8 +90,14 @@ export const PlaybackControls = () => {
           )}
         </div>
         <div className="">
-          <div className={"w-56 h-6 flex items-center overflow-hidden whitespace-nowrap"}>
-            <p className={`text-sm font-bold ${titleStyle}`}>{metadata.title}</p>
+          <div
+            className={
+              "w-56 h-6 flex items-center overflow-hidden whitespace-nowrap"
+            }
+          >
+            <p className={`text-sm font-bold ${titleStyle}`}>
+              {metadata.title}
+            </p>
           </div>
           <p className="text-sm truncate">{metadata.channelTitle}</p>
         </div>
