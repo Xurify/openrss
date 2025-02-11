@@ -63,7 +63,7 @@ export const parseRssFeed = async (
       const link = item.link ?? "";
       const pubDate = item.pubDate ?? "";
       const guid = item.guid ?? link;
-      const enclosureUrl = item.enclosure?.url ?? "";
+      const url = item.enclosure?.url ?? "";
 
       return {
         title: episodeTitle,
@@ -73,7 +73,7 @@ export const parseRssFeed = async (
         guid: guid,
         imageUrl,
         channelTitle,
-        enclosureUrl,
+        url,
         feedUrl,
       };
     });

@@ -8,7 +8,7 @@ export const RssItemSchema = z.object({
   guid: z.string(),
   imageUrl: z.string().optional(),
   channelTitle: z.string().optional(),
-  enclosureUrl: z.string().optional(),
+  url: z.string().optional(),
   feedUrl: z.string(),
 });
 

@@ -18,11 +18,12 @@ interface RssItemCardProps {
 }
 
 export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, isFavorite }) => {
-  const { setAudioUrl } = useAudio();
+  const { setCurrentEpisode } = useAudio();
 
   const handlePlayNow = (item: RssItem) => {
-    if (item.enclosureUrl) {
-      setAudioUrl(item.enclosureUrl, {
+    if (item.url) {
+      setCurrentEpisode(item.url, {
+        url: item.url,
         title: item.title,
         channelTitle: item.channelTitle,
         imageUrl: item.imageUrl,
@@ -90,11 +91,11 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
             />
             {isFavorite ? "Unfavorite" : "Favorite"}
           </Button>
-          {item.enclosureUrl && (
+          {item.url && (
             <Button
               variant="transparent"
               className="flex-1 h-12"
-              onClick={() => window.open(item.enclosureUrl, "_blank")}
+              onClick={() => window.open(item.url, "_blank")}
             >
               <DownloadIcon className="h-4 w-4" />
               Download

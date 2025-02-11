@@ -8,12 +8,13 @@ interface AudioMetadata {
   channelTitle?: string;
   imageUrl?: string;
   guid: string;
+  url: string;
 }
 
 interface AudioContextType {
-  audioUrl: string;
+  episodeUrl: string;
   metadata: AudioMetadata | null;
-  setAudioUrl: (url: string, metadata: AudioMetadata) => void;
+  setCurrentEpisode: (url: string, metadata: AudioMetadata) => void;
   duration: number;
   currentTime: number;
   isPlaying: boolean;
@@ -25,19 +26,19 @@ interface AudioContextType {
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
-  const [audioUrl, setAudioUrlState] = useState<string>('');
+  const [episodeUrl, setEpisodeUrl] = useState<string>('');
   const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
-  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } = useAudioPlayer(audioUrl);
+  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } = useAudioPlayer(episodeUrl);
 
-  const setAudioUrl = (url: string, newMetadata: AudioMetadata) => {
-    setAudioUrlState(url);
+  const setCurrentEpisode = (url: string, newMetadata: AudioMetadata) => {
+    setEpisodeUrl(url);
     setMetadata(newMetadata);
   };
 
   const value = {
-    audioUrl,
+    episodeUrl,
     metadata,
-    setAudioUrl,
+    setCurrentEpisode,
     duration,
     currentTime,
     isPlaying,
