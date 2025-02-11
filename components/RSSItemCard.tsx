@@ -7,7 +7,7 @@ import {
 } from "@/components/core/card";
 import { Button } from "@/components/core/button";
 import { HeartIcon, DownloadIcon } from "lucide-react";
-import { formatDate, truncateTitle } from "@/utils/rss";
+import { formatDate, truncate } from "@/utils/strings";
 import { type RssItem } from "@/types/rss";
 import { useAudio } from "@/contexts/AudioContext";
 
@@ -58,7 +58,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
                   {item.channelTitle}
                 </span>
               )}
-              {truncateTitle(item.title)}
+              {truncate(item.title)}
             </a>
           </CardTitle>
           <CardDescription>{formatDate(item.pubDate)}</CardDescription>

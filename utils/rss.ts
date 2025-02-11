@@ -16,30 +16,6 @@ const extractAndTruncateDescription = (html: string): string => {
   return "";
 };
 
-export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const isLastYear = date.getFullYear() < now.getFullYear();
-
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: isLastYear ? "numeric" : undefined,
-  };
-
-  return date.toLocaleDateString(undefined, options);
-};
-
-export const truncateTitle = (
-  title: string,
-  maxLength: number = 50
-): string => {
-  if (title.length > maxLength) {
-    return title.substring(0, maxLength) + "...";
-  }
-  return title;
-};
-
 export const parseRssFeed = async (
   xmlText: string,
   feedUrl: string,
