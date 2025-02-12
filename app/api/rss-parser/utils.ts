@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import { RssFeed } from "@/types/rss";
-import { parseRssFeed } from "@/utils/rss";
+import { parseRssFeed } from "@/lib/utils/rss";
 
 const extractAndTruncateDescription = (html: string): string => {
   const dom = new JSDOM(html);

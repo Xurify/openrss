@@ -7,7 +7,7 @@ import {
 } from "@/components/core/card";
 import { Button } from "@/components/core/button";
 import { HeartIcon, DownloadIcon } from "lucide-react";
-import { formatDate, truncate } from "@/utils/strings";
+import { formatDate, truncate } from "@/lib/utils/strings";
 import { type RssItem } from "@/types/rss";
 import { useAudio } from "@/contexts/AudioContext";
 

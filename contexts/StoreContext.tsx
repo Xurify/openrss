@@ -14,7 +14,7 @@ import {
   toggleFavorite as dbToggleFavorite,
   deleteEpisodes as clearEpisodesFromDb,
   deleteAllFavorites as clearFavoritesFromDb,
-} from "@/utils/db";
+} from "@/lib/utils/db";
 import type { RssItem } from "@/types/rss";
 
 interface StoreContextType {
