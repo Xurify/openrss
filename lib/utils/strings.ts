@@ -35,7 +35,7 @@ export const truncate = (
   if (text.length <= maxLength) return text;
 
   const truncateAt = maxLength - ellipsis.length;
-  let result = preserveWords
+  const result = preserveWords
     ? text.slice(0, text.lastIndexOf(" ", truncateAt))
     : text.slice(0, truncateAt);
 
