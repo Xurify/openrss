@@ -109,3 +109,19 @@ export async function deleteEpisodes(removeAll: boolean = false) {
     await tx.done;
   }
 }
+
+export async function updateEpisodeDownloadedStatus(
+  guid: string,
+  downloaded: boolean
+): Promise<void> {
+  const db = await getDB();
+  const tx = db.transaction("episodes", "readwrite");
+  const store = tx.store;
+  const episode = await store.get(guid);
+  if (episode) {
+    episode.downloaded = downloaded;
+    await store.put(episode);
+  }
+  await tx.done;
+  db.close();
+}

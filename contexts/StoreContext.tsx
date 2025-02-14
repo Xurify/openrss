@@ -14,6 +14,7 @@ import {
   toggleFavorite as dbToggleFavorite,
   deleteEpisodes as clearEpisodesFromDb,
   deleteAllFavorites as clearFavoritesFromDb,
+  updateEpisodeDownloadedStatus as dbUpdateEpisodeDownloadedStatus,
 } from "@/lib/utils/db";
 import type { RssItem } from "@/types/rss";
 
@@ -26,6 +27,7 @@ interface StoreContextType {
   getLatestEpisodes: () => RssItem[];
   toggleFavorite: (guid: string) => Promise<void>;
   isLoading: boolean;
+  updateEpisodeDownloadedStatus: (guid: string, downloaded: boolean) => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -75,19 +77,29 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateEpisodeDownloadedStatus = async (guid: string, downloaded: boolean) => {
+    await dbUpdateEpisodeDownloadedStatus(guid, downloaded);
+    fetchEpisodes();
+  };
+
+  const fetchEpisodes = async () => {
+    setEpisodes(await getEpisodes());
+  };
+
+  const value: StoreContextType = {
+    episodes,
+    favorites,
+    addEpisodes,
+    deleteEpisodes,
+    clearAllFavorites,
+    getLatestEpisodes,
+    toggleFavorite,
+    isLoading,
+    updateEpisodeDownloadedStatus,
+  };
+
   return (
-    <StoreContext.Provider
-      value={{
-        episodes,
-        favorites,
-        addEpisodes,
-        toggleFavorite,
-        isLoading,
-        deleteEpisodes,
-        clearAllFavorites,
-        getLatestEpisodes,
-      }}
-    >
+    <StoreContext.Provider value={value}>
       {children}
     </StoreContext.Provider>
   );

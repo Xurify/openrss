@@ -98,7 +98,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
               onClick={() => window.open(item.url, "_blank")}
             >
               <DownloadIcon className="h-4 w-4" />
-              Download
+              {item.downloaded ? "Downloads" : "Download"}
             </Button>
           )}
         </div>

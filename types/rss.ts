@@ -10,6 +10,7 @@ export const RssItemSchema = z.object({
   channelTitle: z.string().optional(),
   url: z.string().optional(),
   feedUrl: z.string(),
+  downloaded: z.boolean().default(false),
 });
 
 export type RssItem = z.infer<typeof RssItemSchema>;
