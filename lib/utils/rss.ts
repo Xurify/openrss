@@ -69,6 +69,7 @@ export const parseRssFeed = async (
         title: episodeTitle,
         link: link,
         description: processedDescription,
+        downloaded: false,
         pubDate: pubDate,
         guid: guid,
         imageUrl,
