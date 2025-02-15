@@ -21,12 +21,12 @@ import type { RssItem } from "@/types/rss";
 interface StoreContextType {
   episodes: RssItem[];
   favorites: string[];
+  isLoading: boolean;
   addEpisodes: (newEpisodes: RssItem[]) => Promise<void>;
   deleteEpisodes: (removeAll?: boolean) => Promise<void>;
   clearAllFavorites: () => Promise<void>;
   getLatestEpisodes: () => RssItem[];
   toggleFavorite: (guid: string) => Promise<void>;
-  isLoading: boolean;
   updateEpisodeDownloadedStatus: (guid: string, downloaded: boolean) => Promise<void>;
 }
 
@@ -79,7 +79,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const updateEpisodeDownloadedStatus = async (guid: string, downloaded: boolean) => {
     await dbUpdateEpisodeDownloadedStatus(guid, downloaded);
-    fetchEpisodes();
+    setEpisodes(await getEpisodes());
   };
 
   const fetchEpisodes = async () => {

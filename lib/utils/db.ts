@@ -123,5 +123,4 @@ export async function updateEpisodeDownloadedStatus(
     await store.put(episode);
   }
   await tx.done;
-  db.close();
 }

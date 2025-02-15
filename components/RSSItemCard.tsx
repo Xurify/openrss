@@ -10,6 +10,7 @@ import { HeartIcon, DownloadIcon } from "lucide-react";
 import { formatDate, truncate } from "@/lib/utils/strings";
 import { type RssItem } from "@/types/rss";
 import { useAudio } from "@/contexts/AudioContext";
+import { useStore } from "@/contexts/StoreContext";
 
 interface RssItemCardProps {
   item: RssItem;
@@ -17,8 +18,13 @@ interface RssItemCardProps {
   toggleFavorite: (guid: string) => Promise<void>;
 }
 
-export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, isFavorite }) => {
+export const RssItemCard: React.FC<RssItemCardProps> = ({
+  item,
+  toggleFavorite,
+  isFavorite,
+}) => {
   const { setCurrentEpisode } = useAudio();
+  const { updateEpisodeDownloadedStatus } = useStore();
 
   const handlePlayNow = (item: RssItem) => {
     if (item.url) {
@@ -30,6 +36,10 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
         guid: item.guid,
       });
     }
+  };
+
+  const handleDownload = (item: RssItem) => {
+    updateEpisodeDownloadedStatus(item.guid, !item.downloaded);
   };
 
   return (
@@ -63,9 +73,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
             </a>
           </CardTitle>
           <CardDescription>{formatDate(item.pubDate)}</CardDescription>
-          <p className="mt-2 text-sm text-gray-600">
-            {item.description}
-          </p>
+          <p className="mt-2 text-sm text-gray-600">{item.description}</p>
         </div>
       </CardContent>
       <CardFooter className="mt-auto p-0 flex flex-col items-center">
@@ -84,9 +92,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
           >
             <HeartIcon
               className={`h-4 w-4 ${
-                isFavorite
-                  ? "fill-red-500 text-black"
-                  : "text-black"
+                isFavorite ? "fill-red-500 text-black" : "text-black"
               }`}
             />
             {isFavorite ? "Unfavorite" : "Favorite"}
@@ -95,14 +101,18 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({ item, toggleFavorite, 
             <Button
               variant="transparent"
               className="flex-1 h-12"
-              onClick={() => window.open(item.url, "_blank")}
+              onClick={() => handleDownload(item)}
             >
-              <DownloadIcon className="h-4 w-4" />
-              {item.downloaded ? "Downloads" : "Download"}
+              <DownloadIcon
+                className={
+                  item.downloaded ? "h-4 w-4 text-green-500" : "h-4 w-4"
+                }
+              />
+              {item.downloaded ? "Downloaded" : "Download"}
             </Button>
           )}
         </div>
       </CardFooter>
     </div>
   );
-}; 
+};
