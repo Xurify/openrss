@@ -5,7 +5,7 @@ import { RssItemCard } from "@/components/RSSItemCard";
 import { type RssItem } from "@/types/rss";
 
 export default function DownloadsPage() {
-  const { episodes, favorites, toggleFavorite } = useStore();
+  const { episodes, favorites } = useStore();
 
   const downloadedEpisodes = episodes.filter(item => item.downloaded);
 
