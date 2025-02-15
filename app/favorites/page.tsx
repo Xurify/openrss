@@ -5,7 +5,7 @@ import { RssItemCard } from "@/components/RSSItemCard";
 import { type RssItem } from "@/types/rss";
 
 export default function FavoritesPage() {
-  const { episodes, favorites, toggleFavorite } = useStore();
+  const { episodes, favorites } = useStore();
 
   const favoriteEpisodes = (episodes as RssItem[]).filter(item =>
     favorites.includes(item.guid)
@@ -29,7 +29,6 @@ export default function FavoritesPage() {
             key={item.guid}
             item={item}
             isFavorite={true}
-            toggleFavorite={toggleFavorite}
           />
         ))}
       </div>

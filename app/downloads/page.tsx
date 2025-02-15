@@ -27,7 +27,6 @@ export default function DownloadsPage() {
             key={item.guid}
             item={item}
             isFavorite={favorites.includes(item.guid)}
-            toggleFavorite={toggleFavorite}
           />
         ))}
       </div>

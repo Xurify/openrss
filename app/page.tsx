@@ -11,7 +11,7 @@ import { RssItemCard } from "@/components/RSSItemCard";
 export default function Home() {
   const [importFeedUrl, setImportFeedUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { addEpisodes, favorites, toggleFavorite, getLatestEpisodes } = useStore();
+  const { addEpisodes, favorites, getLatestEpisodes } = useStore();
 
   const episodes = getLatestEpisodes();
 
@@ -83,7 +83,6 @@ export default function Home() {
               key={item.guid}
               item={item}
               isFavorite={favorites.includes(item.guid)}
-              toggleFavorite={toggleFavorite}
             />
           ))}
         </div>

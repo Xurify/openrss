@@ -15,16 +15,14 @@ import { useStore } from "@/contexts/StoreContext";
 interface RssItemCardProps {
   item: RssItem;
   isFavorite: boolean;
-  toggleFavorite: (guid: string) => Promise<void>;
 }
 
 export const RssItemCard: React.FC<RssItemCardProps> = ({
   item,
-  toggleFavorite,
   isFavorite,
 }) => {
   const { setCurrentEpisode } = useAudio();
-  const { updateEpisodeDownloadedStatus } = useStore();
+  const { updateEpisodeDownloadedStatus, toggleFavorite } = useStore();
 
   const handlePlayNow = (item: RssItem) => {
     if (item.url) {
