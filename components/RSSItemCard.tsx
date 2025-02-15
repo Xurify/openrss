@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/core/card";
 import { Button } from "@/components/core/button";
-import { HeartIcon, DownloadIcon } from "lucide-react";
+import { HeartIcon, DownloadIcon, CircleCheckIcon } from "lucide-react";
 import { formatDate, truncate } from "@/lib/utils/strings";
 import { type RssItem } from "@/types/rss";
 import { useAudio } from "@/contexts/AudioContext";
@@ -101,11 +101,11 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({
               className="flex-1 h-12"
               onClick={() => handleDownload(item)}
             >
-              <DownloadIcon
-                className={
-                  item.downloaded ? "h-4 w-4 text-green-500" : "h-4 w-4"
-                }
-              />
+              {item.downloaded ? (
+                <CircleCheckIcon className="h-4 w-4 text-green-800 fill-green-500" />
+              ) : (
+                <DownloadIcon className="h-4 w-4" />
+              )}
               {item.downloaded ? "Downloaded" : "Download"}
             </Button>
           )}
