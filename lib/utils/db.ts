@@ -110,7 +110,7 @@ export async function deleteEpisodes(removeAll: boolean = false) {
   }
 }
 
-export async function updateEpisodeDownloadedStatus(
+export async function downloadEpisode(
   guid: string,
   downloaded: boolean
 ): Promise<void> {

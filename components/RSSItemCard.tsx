@@ -22,7 +22,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({
   isFavorite,
 }) => {
   const { setCurrentEpisode } = useAudio();
-  const { updateEpisodeDownloadedStatus, toggleFavorite } = useStore();
+  const { downloadEpisode, toggleFavorite } = useStore();
 
   const handlePlayNow = (item: RssItem) => {
     if (item.url) {
@@ -37,7 +37,7 @@ export const RssItemCard: React.FC<RssItemCardProps> = ({
   };
 
   const handleDownload = (item: RssItem) => {
-    updateEpisodeDownloadedStatus(item.guid, !item.downloaded);
+    downloadEpisode(item.guid, !item.downloaded);
   };
 
   return (

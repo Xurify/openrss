@@ -14,7 +14,7 @@ import {
   toggleFavorite as dbToggleFavorite,
   deleteEpisodes as clearEpisodesFromDb,
   deleteAllFavorites as clearFavoritesFromDb,
-  updateEpisodeDownloadedStatus as dbUpdateEpisodeDownloadedStatus,
+  downloadEpisode as dbDownloadEpisode,
 } from "@/lib/utils/db";
 import type { RssItem } from "@/types/rss";
 
@@ -27,7 +27,7 @@ interface StoreContextType {
   clearAllFavorites: () => Promise<void>;
   getLatestEpisodes: () => RssItem[];
   toggleFavorite: (guid: string) => Promise<void>;
-  updateEpisodeDownloadedStatus: (guid: string, downloaded: boolean) => Promise<void>;
+  downloadEpisode: (guid: string, downloaded: boolean) => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -77,8 +77,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateEpisodeDownloadedStatus = async (guid: string, downloaded: boolean) => {
-    await dbUpdateEpisodeDownloadedStatus(guid, downloaded);
+  const downloadEpisode = async (guid: string, downloaded: boolean) => {
+    await dbDownloadEpisode(guid, downloaded);
     setEpisodes(await getEpisodes());
   };
 
@@ -95,7 +95,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     getLatestEpisodes,
     toggleFavorite,
     isLoading,
-    updateEpisodeDownloadedStatus,
+    downloadEpisode,
   };
 
   return (
