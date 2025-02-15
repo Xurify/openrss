@@ -38,14 +38,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getEpisodes().then(setEpisodes);
+    fetchEpisodes();
     getFavorites().then((favs) => setFavorites(favs.map((f) => f.guid)));
     setIsLoading(false);
   }, []);
 
+  const fetchEpisodes = async () => {
+    setEpisodes(await getEpisodes());
+  };
+
   const addEpisodes = async (newEpisodes: RssItem[]) => {
     await dbAddEpisodes(newEpisodes);
-    setEpisodes(await getEpisodes());
+    fetchEpisodes();
   };
 
   const toggleFavorite = async (guid: string) => {
@@ -79,11 +83,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const downloadEpisode = async (guid: string, downloaded: boolean) => {
     await dbDownloadEpisode(guid, downloaded);
-    setEpisodes(await getEpisodes());
-  };
-
-  const fetchEpisodes = async () => {
-    setEpisodes(await getEpisodes());
+    fetchEpisodes();
   };
 
   const value: StoreContextType = {
