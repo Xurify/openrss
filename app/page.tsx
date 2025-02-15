@@ -77,7 +77,7 @@ export default function Home() {
           <Loader2 className="h-14 w-14 animate-spin text-black" />
         </div>
       ) : (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
           {episodes.map((item) => (
             <RssItemCard
               key={item.guid}
