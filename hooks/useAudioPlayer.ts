@@ -16,6 +16,7 @@ export const useAudioPlayer = (audioUrl: string) => {
 
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
+    audio.pause();
 
     audio.addEventListener('loadedmetadata', () => {
       setDuration(audio.duration);
@@ -38,9 +39,9 @@ export const useAudioPlayer = (audioUrl: string) => {
       setCurrentTime(0);
     });
 
-    audio.play().catch(error => {
-      console.error('Error playing audio:', error);
-    });
+    // audio.play().catch(error => {
+    //   console.error('Error playing audio:', error);
+    // });
 
     return () => {
       audio.pause();
