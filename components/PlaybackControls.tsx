@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useAudio } from "@/contexts/AudioContext";
 import { useStore } from "@/contexts/StoreContext";
-import { Slider } from "@/components/ui/slider";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 import {
   HeartIcon,
   PauseIcon,
@@ -156,13 +157,25 @@ export const PlaybackControls = () => {
         </div>
         <div className="mt-1 max-w-[500px] w-full flex items-center gap-2">
           <span className="text-sm">{formatTime(currentTime)}</span>
-          <Slider
-            className="w-full cursor-pointer"
-            value={[currentTime]}
-            onValueChange={(value) => seek(value[0])}
-            max={duration}
-            step={1}
-          />
+          <div className="w-full ml-2">
+            <Slider
+              className="w-full"
+              value={currentTime}
+              onChange={(value) => seek(value as number)}
+              max={duration}
+              step={1}
+              styles={{
+                rail: { backgroundColor: "rgba(255, 255, 255, 0.25)" },
+                track: { backgroundColor: "white" },
+                handle: {
+                  backgroundColor: "white",
+                  border: "none",
+                  boxShadow: "none",
+                  opacity: 1,
+                },
+              }}
+            />
+          </div>
           <span className="text-sm">{formatTime(duration)}</span>
         </div>
       </div>
@@ -177,11 +190,21 @@ export const PlaybackControls = () => {
           <VolumeIconComponent />
         </button>
         <Slider
-          className="max-w-[100px] cursor-pointer"
-          value={volume}
-          onValueChange={handleVolumeChange}
+          className="max-w-[100px]"
+          value={volume[0]}
+          onChange={(value) => handleVolumeChange([value as number])}
           max={100}
           step={1}
+          styles={{
+            rail: { backgroundColor: "rgba(255, 255, 255, 0.25)" },
+            track: { backgroundColor: "white" },
+            handle: {
+              backgroundColor: "white",
+              border: "none",
+              boxShadow: "none",
+              opacity: 1,
+            },
+          }}
         />
       </div>
     </div>
