@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 export const useAudioPlayer = (audioUrl: string) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -16,32 +16,32 @@ export const useAudioPlayer = (audioUrl: string) => {
 
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
-    audio.pause();
+    //audio.pause();
 
-    audio.addEventListener('loadedmetadata', () => {
+    audio.addEventListener("loadedmetadata", () => {
       setDuration(audio.duration);
     });
 
-    audio.addEventListener('timeupdate', () => {
+    audio.addEventListener("timeupdate", () => {
       setCurrentTime(audio.currentTime);
     });
 
-    audio.addEventListener('play', () => {
+    audio.addEventListener("play", () => {
       setIsPlaying(true);
     });
 
-    audio.addEventListener('pause', () => {
+    audio.addEventListener("pause", () => {
       setIsPlaying(false);
     });
 
-    audio.addEventListener('ended', () => {
+    audio.addEventListener("ended", () => {
       setIsPlaying(false);
       setCurrentTime(0);
     });
 
-    // audio.play().catch(error => {
-    //   console.error('Error playing audio:', error);
-    // });
+    audio.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
 
     return () => {
       audio.pause();
@@ -55,10 +55,15 @@ export const useAudioPlayer = (audioUrl: string) => {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play().catch(error => {
-        console.error('Error playing audio:', error);
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing audio:", error);
       });
     }
+  };
+
+  const pause = () => {
+    if (!audioRef.current) return;
+    audioRef.current.pause();
   };
 
   const seek = (time: number) => {
@@ -79,6 +84,7 @@ export const useAudioPlayer = (audioUrl: string) => {
     isPlaying,
     togglePlay,
     seek,
-    setVolume
+    setVolume,
+    pause,
   };
 };

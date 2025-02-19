@@ -37,7 +37,7 @@ const LAST_PLAYED_KEY = "openrss_last_played";
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [episodeUrl, setEpisodeUrl] = useState<string>("");
   const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
-  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume } =
+  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume, pause } =
     useAudioPlayer(episodeUrl);
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       if (savedMetadata.lastPosition) {
         setTimeout(() => {
           savedMetadata.lastPosition && seek(savedMetadata.lastPosition);
+          pause();
         }, 0);
       }
     }
