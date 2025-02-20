@@ -39,10 +39,6 @@ export const useAudioPlayer = (audioUrl: string) => {
       setCurrentTime(0);
     });
 
-    audio.play().catch((error) => {
-      console.error("Error playing audio:", error);
-    });
-
     return () => {
       audio.pause();
       audio.remove();
@@ -59,6 +55,13 @@ export const useAudioPlayer = (audioUrl: string) => {
         console.error("Error playing audio:", error);
       });
     }
+  };
+
+  const play = () => {
+    if (!audioRef.current) return;
+    audioRef.current.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
   };
 
   const pause = () => {
@@ -85,6 +88,7 @@ export const useAudioPlayer = (audioUrl: string) => {
     togglePlay,
     seek,
     setVolume,
+    play,
     pause,
   };
 };

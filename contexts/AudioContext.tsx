@@ -26,6 +26,8 @@ interface AudioContextType {
   currentTime: number;
   isPlaying: boolean;
   togglePlay: () => void;
+  play: () => void;
+  pause: () => void;
   seek: (time: number) => void;
   setVolume: (volume: number) => void;
 }
@@ -37,7 +39,7 @@ const LAST_PLAYED_KEY = "openrss_last_played";
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [episodeUrl, setEpisodeUrl] = useState<string>("");
   const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
-  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume, pause } =
+  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume, pause, play } =
     useAudioPlayer(episodeUrl);
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const setCurrentEpisode = (newMetadata: AudioMetadata) => {
     setEpisodeUrl(newMetadata.url);
     setMetadata(newMetadata);
+    play();
   };
 
   const value = {
@@ -91,6 +94,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     isPlaying,
     togglePlay: handleTogglePlay,
     seek,
+    play,
+    pause,
     setVolume,
   };
 
