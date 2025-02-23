@@ -32,6 +32,8 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
+export const LOCAL_STORAGE_LAST_PLAYED_KEY = "openrss_last_played";
+
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [episodes, setEpisodes] = useState<RssItem[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);

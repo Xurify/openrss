@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useStore } from "@/contexts/StoreContext";
+import { useStore, LOCAL_STORAGE_LAST_PLAYED_KEY } from "@/contexts/StoreContext";
 import { Button } from "@/components/core/button";
 import { Modal } from "@/components/core/modal";
 
@@ -26,6 +26,7 @@ export default function SettingsPage() {
 
   const handleClearStorage = async () => {
     await deleteEpisodes(deleteFavorites);
+    localStorage.removeItem(LOCAL_STORAGE_LAST_PLAYED_KEY);
     closeModal();
   };
 

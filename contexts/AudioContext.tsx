@@ -8,6 +8,7 @@ import {
   useEffect,
 } from "react";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+import { LOCAL_STORAGE_LAST_PLAYED_KEY } from "./StoreContext";
 
 interface AudioMetadata {
   title: string;
@@ -34,8 +35,6 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-const LAST_PLAYED_KEY = "openrss_last_played";
-
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [episodeUrl, setEpisodeUrl] = useState<string>("");
   const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
@@ -43,7 +42,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     useAudioPlayer(episodeUrl);
 
   useEffect(() => {
-    const lastPlayed = localStorage.getItem(LAST_PLAYED_KEY);
+    const lastPlayed = localStorage.getItem(LOCAL_STORAGE_LAST_PLAYED_KEY);
     if (lastPlayed) {
       const savedMetadata = JSON.parse(lastPlayed) as AudioMetadata;
       setEpisodeUrl(savedMetadata.url);
@@ -60,7 +59,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const saveCurrentState = () => {
     if (metadata && currentTime > 0) {
       localStorage.setItem(
-        LAST_PLAYED_KEY,
+        LOCAL_STORAGE_LAST_PLAYED_KEY,
         JSON.stringify({
           ...metadata,
           lastPosition: currentTime,
@@ -82,7 +81,6 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const setCurrentEpisode = (newMetadata: AudioMetadata) => {
     setEpisodeUrl(newMetadata.url);
     setMetadata(newMetadata);
-    play();
   };
 
   const value = {
