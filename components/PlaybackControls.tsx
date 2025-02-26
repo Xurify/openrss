@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAudio } from "@/contexts/AudioContext";
-import { useStore } from "@/contexts/StoreContext";
+import {
+  LOCAL_STORAGE_LAST_PLAYED_KEY,
+  useStore,
+} from "@/contexts/StoreContext";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import {
@@ -19,6 +22,8 @@ import {
   Volume1Icon,
   VolumeXIcon,
 } from "lucide-react";
+import { useEventListener } from "@/hooks/useEventListener";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export const PlaybackControls = () => {
   const {
@@ -29,10 +34,42 @@ export const PlaybackControls = () => {
     seek,
     setVolume,
     metadata,
+    setCurrentEpisode,
   } = useAudio();
   const { favorites, toggleFavorite } = useStore();
   const [volume, setVolumeState] = useState([50]);
   const [isMuted, setIsMuted] = useState(false);
+
+  // useEffect(() => {
+  //   const lastPlayed = localStorage.getItem(LOCAL_STORAGE_LAST_PLAYED_KEY);
+  //   if (lastPlayed) {
+  //     const savedMetadata = JSON.parse(lastPlayed) as AudioMetadata;
+  //     setEpisodeUrl(savedMetadata.url);
+  //     setMetadata(savedMetadata);
+  //     if (savedMetadata.lastPosition) {
+  //       setTimeout(() => {
+  //         savedMetadata.lastPosition && seek(savedMetadata.lastPosition);
+  //         pause();
+  //       }, 0);
+  //     }
+  //   }
+  // }, []);
+
+  const saveCurrentState = () => {
+    if (metadata && currentTime > 0) {
+      setCurrentEpisode({
+        ...(metadata || {}),
+        lastPosition: currentTime,
+        //duration: duration,
+      });
+
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", saveCurrentState);
+    return () => window.removeEventListener("beforeunload", saveCurrentState);
+  }, [metadata, currentTime]);
 
   const formatTime = (time: number): string => {
     const hours = Math.floor(time / 3600);
@@ -48,7 +85,10 @@ export const PlaybackControls = () => {
     }
   };
 
-  const handlePlayPause = () => togglePlay();
+  const handlePlayPause = () => {
+    togglePlay();
+    saveCurrentState();
+  };
   const handleSkipForward = () => seek(duration);
   const handleRewind15 = () => seek(Math.max(0, currentTime - 15));
   const handleForward15 = () => seek(Math.min(duration, currentTime + 15));

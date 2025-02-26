@@ -5,6 +5,8 @@ export const RssItemSchema = z.object({
   link: z.string(),
   description: z.string(),
   pubDate: z.string(),
+  //lastPosition: z.number().optional(),
+  duration: z.number(),
   guid: z.string(),
   imageUrl: z.string().optional(),
   channelTitle: z.string().optional(),

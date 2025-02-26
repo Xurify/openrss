@@ -9,8 +9,9 @@ import {
 } from "react";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { LOCAL_STORAGE_LAST_PLAYED_KEY } from "./StoreContext";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-interface AudioMetadata {
+export interface AudioMetadata {
   title: string;
   channelTitle?: string;
   imageUrl?: string;
@@ -37,45 +38,34 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [episodeUrl, setEpisodeUrl] = useState<string>("");
-  const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
-  const { duration, currentTime, isPlaying, togglePlay, seek, setVolume, pause, play } =
-    useAudioPlayer(episodeUrl);
+  //const [metadata, setMetadata] = useState<AudioMetadata | null>(null);
+  const [metadata, setMetadata] = useLocalStorage<AudioMetadata | null>(
+    LOCAL_STORAGE_LAST_PLAYED_KEY,
+    null
+  );
+  const {
+    duration,
+    currentTime,
+    isPlaying,
+    togglePlay,
+    seek,
+    setVolume,
+    pause,
+    play,
+  } = useAudioPlayer(episodeUrl);
 
   useEffect(() => {
-    const lastPlayed = localStorage.getItem(LOCAL_STORAGE_LAST_PLAYED_KEY);
-    if (lastPlayed) {
-      const savedMetadata = JSON.parse(lastPlayed) as AudioMetadata;
-      setEpisodeUrl(savedMetadata.url);
-      setMetadata(savedMetadata);
-      if (savedMetadata.lastPosition) {
-        setTimeout(() => {
-          savedMetadata.lastPosition && seek(savedMetadata.lastPosition);
-          pause();
-        }, 0);
-      }
+    if (metadata?.lastPosition) {
+      setTimeout(() => {
+        metadata.lastPosition && seek(metadata.lastPosition);
+        console.log("Seeked to", metadata.lastPosition, metadata);
+        pause();
+      }, 1000);
     }
   }, []);
 
-  const saveCurrentState = () => {
-    if (metadata && currentTime > 0) {
-      localStorage.setItem(
-        LOCAL_STORAGE_LAST_PLAYED_KEY,
-        JSON.stringify({
-          ...metadata,
-          lastPosition: currentTime,
-        })
-      );
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", saveCurrentState);
-    return () => window.removeEventListener("beforeunload", saveCurrentState);
-  }, [metadata, currentTime]);
-
   const handleTogglePlay = () => {
     togglePlay();
-    saveCurrentState();
   };
 
   const setCurrentEpisode = (newMetadata: AudioMetadata) => {

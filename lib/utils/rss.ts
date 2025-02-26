@@ -64,6 +64,7 @@ export const parseRssFeed = async (
       const pubDate = item.pubDate ?? "";
       const guid = item.guid ?? link;
       const url = item.enclosure?.url ?? "";
+      const duration = Number(item.enclosure?.length) ?? 0;
 
       return {
         title: episodeTitle,
@@ -71,6 +72,7 @@ export const parseRssFeed = async (
         description: processedDescription,
         downloaded: false,
         pubDate: pubDate,
+        duration: duration,
         guid: guid,
         imageUrl,
         channelTitle,
